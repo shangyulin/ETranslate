@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">e翻译</string>
+    <string-array name="title">
+        <item>翻译</item>
+        <item>我的</item>
+    </string-array>
+
+    <string name="tv_user_name">未知</string>
+    <string name="tv_window">悬浮窗设置</string>
+    <string name="tv_window_bottom">底部悬浮窗设置</string>
+    <string name="tv_delete">删除查询记录</string>
+    <string name="add">加入单词本</string>
+    <string name="clear">清空</string>
+    <string name="tv_wordbook">单词本</string>
+    <string name="tv_autoquery">自动查询</string>
+    <string name="tv_test">测试</string>
+    <string name="tv_ocr">Optical Character Recognition</string>
+    <string name="tv_text">一切都得从去年夏天开始说起，火箭在炒掉小比克斯塔夫后，进入到选帅流程。谁是适合休城的主帅？本着头痛医头脚痛医脚的想法，懂球帝们强烈推荐小范甘迪。这得到了火箭球迷的极力响应，首先，小范甘迪是大家的老熟人；其次，小范甘迪强调防守，崇尚纪律。这简直太扎心了，上赛季火箭的问题，不就是防守涣散，毫无纪律吗？
+在当时，不光是坊间呼吁小范甘迪入主，火箭球迷大量支持，就连莫雷，也倾向于让小范甘迪来治一治球队。毕竟2015-16赛季火箭的表现，多少有些让莫雷感到怀疑人生，难不成数据篮球真不好使了？既然如此，就让老派的教练来试试吧。正是由于这样的缘故，当时博彩公司开出的赔率显示，小范甘迪遥遥领先。
+但，一个人的出现改变了一切。作为火箭的老板，亚历山大否决了小范甘迪的入主，并力排众议，请来了德安东尼。当美媒爆料亚历山大操纵一切后，火箭球迷阵营顿时炸锅。“亚历山大究竟懂不懂球”，“他只想着赚钱”，唾骂声不绝于耳。球迷很生气，可结果却是……某种程度上来说，许多火箭球迷，是不是欠亚历山大一个道歉？
+</string>
+</resources>

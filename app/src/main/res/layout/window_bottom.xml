@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal"
+    android:background="#C0C0C0">
+
+    <LinearLayout
+        android:id="@+id/auto_query"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_autoquery"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/selector_autoquery"/>
+        <TextView
+            android:id="@+id/tv_autoquery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自动查询"
+            android:textColor="@drawable/selector_text"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/selector_add"/>
+        <TextView
+            android:id="@+id/tv_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加"
+            android:textColor="@drawable/selector_text"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/shared"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_shared"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/selector_shared"/>
+        <TextView
+            android:id="@+id/tv_shared"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="分享"
+            android:textColor="@drawable/selector_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/exits"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/selector_exit"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="退出"
+            android:textColor="@drawable/selector_text"/>
+
+    </LinearLayout>
+</LinearLayout>
