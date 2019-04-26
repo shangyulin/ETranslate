@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -22,12 +21,18 @@ public class HaHaAdapter extends RecyclerView.Adapter<HaHaAdapter.BaseViewHolder
     private Context mContext;
     private List<Question> nlist;
     private List<OfficeQuestion> olist;
+    private boolean first = true;
 
     public HaHaAdapter(Context context, List<Question> list, List<OfficeQuestion> officeList) {
         this.mContext = context;
         this.nlist = list;
         this.olist = officeList;
     }
+
+    public void setFlush(boolean flag){
+        first = flag;
+    }
+
 
     @NonNull
     @Override
@@ -52,8 +57,9 @@ public class HaHaAdapter extends RecyclerView.Adapter<HaHaAdapter.BaseViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaseViewHolder myViewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final BaseViewHolder myViewHolder, final int i) {
         if (myViewHolder instanceof NormalViewHolder) {
+
             ((NormalViewHolder) myViewHolder).question.setText(nlist.get(i - 1).getQuestion());
             ((NormalViewHolder) myViewHolder).answer.setText(nlist.get(i - 1).getAnswer().get(0));
             if (nlist.get(i - 1).getAnswer().size() > 1) {
@@ -71,13 +77,26 @@ public class HaHaAdapter extends RecyclerView.Adapter<HaHaAdapter.BaseViewHolder
                 ((NormalViewHolder) myViewHolder).has_more.setVisibility(View.GONE);
             }
         } else if (myViewHolder instanceof OfficeViewHolder) {
-            if (olist.size() == 1) {
-                ((OfficeViewHolder) myViewHolder).linearLayout.addView(ToolUtils.addQuestion(mContext, olist.get(0), 3));
-            } else if (olist.size() >= 2) {
-                for (int j = 0; j < 2; j++){
-                    ((OfficeViewHolder) myViewHolder).linearLayout.addView(ToolUtils.addQuestion(mContext, olist.get(j), 1));
+            if (first){
+                first = false;
+                ((OfficeViewHolder) myViewHolder).linearLayout.removeAllViews();
+                if (olist.size() == 1) {
+                    ((OfficeViewHolder) myViewHolder).linearLayout.addView(ToolUtils.addQuestion(mContext, olist.get(0), 3));
+                } else if (olist.size() >= 2) {
+                    for (int j = 0; j < 2; j++){
+                        ((OfficeViewHolder) myViewHolder).linearLayout.addView(ToolUtils.addQuestion(mContext, olist.get(j), 1));
+                    }
                 }
             }
+            ((OfficeViewHolder) myViewHolder).loadmore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((OfficeViewHolder) myViewHolder).loadmore.setVisibility(View.INVISIBLE);
+                    for (int j = 2; j < olist.size(); j++){
+                        ((OfficeViewHolder) myViewHolder).linearLayout.addView(ToolUtils.addQuestion(mContext, olist.get(j), 1));
+                    }
+                }
+            });
         }
     }
 
@@ -111,10 +130,12 @@ public class HaHaAdapter extends RecyclerView.Adapter<HaHaAdapter.BaseViewHolder
     class OfficeViewHolder extends BaseViewHolder {
 
         private LinearLayout linearLayout;
+        private TextView loadmore;
 
         public OfficeViewHolder(@NonNull View itemView) {
             super(itemView);
             linearLayout = itemView.findViewById(R.id.office_question);
+            loadmore = itemView.findViewById(R.id.loadmore);
         }
     }
 }

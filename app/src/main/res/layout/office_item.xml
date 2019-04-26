@@ -36,6 +36,7 @@
         android:padding="5dp" />
 
     <TextView
+        android:id="@+id/loadmore"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo"
