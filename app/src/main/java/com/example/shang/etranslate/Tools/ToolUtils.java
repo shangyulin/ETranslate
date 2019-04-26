@@ -1,9 +1,14 @@
 package com.example.shang.etranslate.Tools;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Xml;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shang.etranslate.JavaBean.OfficeQuestion;
 import com.example.shang.etranslate.JavaBean.TranslateInformation;
 import com.example.shang.etranslate.R;
 
@@ -32,11 +37,40 @@ public class ToolUtils {
 
     public static Toast toast;
     private TranslateInformation translateInformation;
-    private List<TranslateInformation> informationsList = new ArrayList<TranslateInformation>();;
+    private List<TranslateInformation> informationsList = new ArrayList<TranslateInformation>();
+    ;
 
 
     private static FileOutputStream output;
     private static InputStream in;
+
+
+    public static LinearLayout addQuestion(Context context, OfficeQuestion officeQuestion, int maxLine) {
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(5, 5, 5, 5);
+
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        textView.setMaxLines(1);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setText(officeQuestion.getQuestion());
+        textView.setTextColor(Color.BLACK);
+        textView.setPadding(2,2,2,2);
+
+        TextView textView2 = new TextView(context);
+        textView2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        textView2.setMaxLines(maxLine);
+        textView2.setEllipsize(TextUtils.TruncateAt.END);
+        textView2.setText(officeQuestion.getAnswer());
+        linearLayout.addView(textView);
+        linearLayout.addView(textView2);
+        textView.setPadding(2,2,2,2);
+
+        return linearLayout;
+    }
+
 
     public static void copyDB(Context context, File desFile) {
         if (desFile.exists()) {
@@ -70,10 +104,10 @@ public class ToolUtils {
         }
     }
 
-    public static void showToast(String str){
-        if(toast==null){
+    public static void showToast(String str) {
+        if (toast == null) {
             toast = Toast.makeText(BaseApplication.getContext(), str, Toast.LENGTH_LONG);
-        }else{
+        } else {
             toast.setText(str);
         }
         toast.show();
@@ -82,7 +116,7 @@ public class ToolUtils {
     /**
      * 将查询信心保存到xml文件中
      */
-    public static void writeXml(File file, TranslateInformation information){
+    public static void writeXml(File file, TranslateInformation information) {
         XmlSerializer serializer = Xml.newSerializer();
         FileOutputStream fos = null;
         try {
@@ -120,9 +154,10 @@ public class ToolUtils {
 
     /**
      * 向xml文件中追加数据
+     *
      * @param information
      */
-    public static void addData(File file, TranslateInformation information){
+    public static void addData(File file, TranslateInformation information) {
         Document document = null;
         SAXReader saxReader = new SAXReader();
         try {
@@ -150,9 +185,10 @@ public class ToolUtils {
 
     /**
      * 读取文件
+     *
      * @return
      */
-    public List<TranslateInformation> readXml(File file){
+    public List<TranslateInformation> readXml(File file) {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -186,7 +222,7 @@ public class ToolUtils {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
@@ -195,8 +231,9 @@ public class ToolUtils {
                 }
             }
         }
-        List<TranslateInformation> list = new ArrayList<TranslateInformation>();;
-        for(int i = informationsList.size()-1; i >= 0; i--){
+        List<TranslateInformation> list = new ArrayList<TranslateInformation>();
+        ;
+        for (int i = informationsList.size() - 1; i >= 0; i--) {
             list.add(informationsList.get(i));
         }
         return list;

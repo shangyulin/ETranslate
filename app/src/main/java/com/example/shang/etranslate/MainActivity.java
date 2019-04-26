@@ -1,5 +1,10 @@
 package com.example.shang.etranslate;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,6 +19,8 @@ import android.widget.Button;
 import com.example.shang.etranslate.Fragment.FragmentFactory;
 import com.example.shang.etranslate.Tools.FileUtils;
 import com.example.shang.etranslate.Tools.ToolUtils;
+import com.giant.channel.base.permission.PermissionChannels;
+import com.giant.channel.base.permission.PermissionRequest;
 
 import java.io.File;
 
@@ -34,6 +41,15 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initData();
         vp.setAdapter(new MyPageAdapter(getSupportFragmentManager()));
+        PermissionRequest.request(this, PermissionChannels.channel_jinli);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 10){
+        }
     }
 
     private void initData() {
@@ -42,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         titleList = getResources().getStringArray(R.array.title);
-        vp = (ViewPager) findViewById(R.id.vp);
-        strip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
+        vp = findViewById(R.id.vp);
+        strip = findViewById(R.id.pager_tab_strip);
         strip.setTabIndicatorColorResource(R.color.indicatorcolor);
     }
 

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.view.Gravity;
@@ -55,21 +56,25 @@ public class WindowToolService extends Service {
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         params.format = PixelFormat.TRANSLUCENT;
-        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;// 电话窗口。它用于电话交互（特别是呼入）。它置于所有应用程序之上，状态栏之下。
+        if (Build.VERSION.SDK_INT >= 26) {
+            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        }
         params.gravity = Gravity.LEFT + Gravity.TOP;// 将重心位置设置为左上方,
         // 也就是(0,0)从左上方开始,而不是默认的重心位置
         params.setTitle("Toast");
         //mParams.alpha = 0.1f;//窗口的透明度
         view = View.inflate(this, R.layout.window_tool, null);
-        icon = (ImageView) view.findViewById(R.id.image);
+        icon = view.findViewById(R.id.image);
         // 处理view的双击事件
         view.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 //复制数组
-                System.arraycopy(src, 1, src, 0, src.length-1);
-                src[src.length-1] = SystemClock.uptimeMillis();
+                System.arraycopy(src, 1, src, 0, src.length - 1);
+                src[src.length - 1] = SystemClock.uptimeMillis();
                 if (src[0] >= (SystemClock.uptimeMillis() - 500)) {
                     Intent intent = new Intent(WindowToolService.this, WindowTranslateActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -81,7 +86,7 @@ public class WindowToolService extends Service {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         startX = (int) event.getRawX();
                         startY = (int) event.getRawY();
@@ -103,9 +108,15 @@ public class WindowToolService extends Service {
                         if (params.x > winWidth - view.getWidth()) {
                             params.x = winWidth - view.getWidth();
                         }
+                        if (params.x < 0){
+                            params.x = 0;
+                        }
 
                         if (params.y > winHeight - view.getHeight()) {
                             params.y = winHeight - view.getHeight();
+                        }
+                        if (params.y < 0){
+                            params.y = 0;
                         }
                         wManager.updateViewLayout(view, params);
                         // 重新初始化起点坐标
@@ -117,10 +128,10 @@ public class WindowToolService extends Service {
                         int x = (int) event.getRawX();
                         int y = (int) event.getRawY();
 
-                        if(x > winWidth / 2){
-                            params.x = winWidth - view.getWidth()/2;
-                        }else{
-                            params.x = -view.getWidth()/2;
+                        if (x > winWidth / 2) {
+                            params.x = winWidth - view.getWidth() / 2;
+                        } else {
+                            params.x = -view.getWidth() / 2;
                         }
                         wManager.updateViewLayout(view, params);
                         break;

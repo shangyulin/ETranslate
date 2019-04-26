@@ -10,6 +10,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -36,56 +37,40 @@ import java.io.File;
 import java.util.Locale;
 
 
-public class TranslateFragment extends Fragment implements TextToSpeech.OnInitListener {
+public class TranslateFragment extends Fragment {
 
     private View view;
     private Button read;// 朗读
     private EditText et_content;// 翻译内容
     private SharedPreferences sp;
-    private ToolUtils toolUtils;
+    private SharedPreferences history;
 
     // 获取保存历史纪录的文件地址
     private File desFile = FileUtils.getHistoryDir();
     private File file = new File(desFile, "history.xml");// 历史文件
-
     private String db_path = FileUtils.getDatabasePath() + "/database.db";
 
     private ImageView qc;
     private ImageView translate;
-    private TextToSpeech textToSpeech;
-
-    private InputMethodManager manager;
-    private TextView et_result_en;
-    private Spinner spinner_from;
-    private Spinner spinner_to;
-
-    private String from = "auto";
-    private String to = "auto";
-
-    String[] language = {"auto", "zh", "en", "yue", "wyw", "jp", "kor", "fra", "spa", "th", "ara", "ru", "pt", "de", "it", "el", "nl", "pl", "bul", "est", "dan", "fin", "cs", "rom"
-            , "slo", "swe", "hu", "cht"};
+    private TextView result_en;
+    private TextView result_xpy;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         sp = BaseApplication.getContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        history = BaseApplication.getContext().getSharedPreferences("config", Context.MODE_PRIVATE);
         view = View.inflate(BaseApplication.getContext(), R.layout.fragment_translate, null);
         initView();
         return view;
     }
 
     private void initView() {
-        manager = (InputMethodManager) BaseApplication.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        textToSpeech = new TextToSpeech(getActivity(), this);
-
-        spinner_from = (Spinner) view.findViewById(R.id.spinner_from);
-        spinner_to = (Spinner) view.findViewById(R.id.spinner_to);
-        qc = (ImageView) view.findViewById(R.id.qingchu);// 清除
-        translate = (ImageView) view.findViewById(R.id.do_translate);// 翻译
-        et_content = (EditText) view.findViewById(R.id.content);// 内容
-        read = (Button) view.findViewById(R.id.read);
-
-
+        qc = view.findViewById(R.id.qingchu);// 清除
+        translate = view.findViewById(R.id.do_translate);// 翻译
+        et_content = view.findViewById(R.id.content);// 内容
+//        result_en = view.findViewById(R.id.result_en);
+//        result_xpy = view.findViewById(R.id.result_xpy);
         translate.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -98,8 +83,8 @@ public class TranslateFragment extends Fragment implements TextToSpeech.OnInitLi
                     char[] chars = content.toCharArray();
                     StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < chars.length; i++) {
-                        String s = "";
-                        String newCode = "";
+                        String s;
+                        String newCode;
                         // 判断字符是否为汉字
                         System.out.println(chars[i]);
                         if (!ToolUtils.isChinese(chars[i])) {
@@ -119,6 +104,7 @@ public class TranslateFragment extends Fragment implements TextToSpeech.OnInitLi
                     }
                     // 翻译结果
                     String result = builder.toString();
+                    result_xpy.setText(builder.toString());
                     // 保存查询记录
                     TranslateInformation information = new TranslateInformation(content, result);
                     if (file.exists()) {
@@ -126,37 +112,23 @@ public class TranslateFragment extends Fragment implements TextToSpeech.OnInitLi
                     } else {
                         ToolUtils.writeXml(file, information);// 添加数据
                     }
-                    // 显示结果
-                    // 根据输入的中文查询英文或其他
-                    RequestUtils requestUtils = new RequestUtils();
-                    try {
-                        requestUtils.translate(content, from, to, new HttpCallBack() {
-                            @Override
-                            public void onSuccess(String result) {
-                            }
+//                    if (!history.contains(content)){
+//                        history.edit().putString(content, result).commit();
+//                    }
 
-                            @Override
-                            public void onFailure(String exception) {
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    RequestUtils.translate(content, "zh", "en", new HttpCallBack() {
+                        @Override
+                        public void onSuccess(String result) {
+                            result_en.setText(result);
+                        }
+
+                        @Override
+                        public void onFailure(String exception) {
+
+                        }
+                    });
                 } else {
                     ToolUtils.showToast("请输入文本！！！");
-                }
-                // 判断当前软键盘是否隐藏，如果不，隐藏掉她
-//                if (getActivity().getWindow().getAttributes().softInputMode == WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE) {
-//                    System.out.println("软键盘开启");
-//                    InputMethodManager manager = (InputMethodManager) BaseApplication.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    manager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-//                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-//                }
-
-                if (manager.isActive(et_content)) {
-                    System.out.println("软键盘开启");
-                    getView().requestFocus();
-                    manager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             }
         });
@@ -168,65 +140,5 @@ public class TranslateFragment extends Fragment implements TextToSpeech.OnInitLi
                 }
             }
         });
-        read.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String content = et_content.getText().toString();
-                if (content != null && content.trim().length() > 0) {
-                    if (textToSpeech != null && !textToSpeech.isSpeaking()) {
-                        textToSpeech.setPitch(-3.0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-                        textToSpeech.setSpeechRate(0.8f);
-                        textToSpeech.speak(content, TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                }
-            }
-        });
-        /**
-         * 监听Spinner切换
-         */
-        spinner_from.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                from=language[position];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spinner_to.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                to=language[position];
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-
-    public boolean isChinese(char ch) {
-        if (ch < 0) {
-            Toast.makeText(BaseApplication.getContext(), "is chinese", Toast.LENGTH_LONG).show();
-            return true;
-        } else {
-            Toast.makeText(BaseApplication.getContext(), "not is chinese", Toast.LENGTH_LONG).show();
-            return false;
-        }
-    }
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            int result = textToSpeech.setLanguage(Locale.CHINA);
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Toast.makeText(BaseApplication.getContext(), "数据丢失或不支持", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }

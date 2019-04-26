@@ -10,10 +10,10 @@ import java.util.Map;
  */
 public class FragmentFactory {
 
-    private static Map<Integer, Fragment> map = new HashMap<Integer, Fragment>();
+    private static Map<Integer, Fragment> map = new HashMap();
 
     public static Fragment getFragment(int position) {
-        Fragment fragment = null;
+        Fragment fragment;
         fragment = map.get(position);
         if (fragment == null) {
             if (position == 0) {
@@ -21,6 +21,7 @@ public class FragmentFactory {
             } else if (position == 1){
                 fragment = new InformationFragment();
             }
+            map.put(position, fragment);
         }
         return fragment;
     }

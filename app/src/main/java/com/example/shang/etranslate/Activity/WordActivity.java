@@ -1,8 +1,7 @@
 package com.example.shang.etranslate.Activity;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,15 +20,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WordActivity extends ActionBarActivity {
+public class WordActivity extends AppCompatActivity {
 
     private List<TranslateInformation> list = new ArrayList<TranslateInformation>();
     private ListView lv;
     private ToolUtils toolUtils;
-    private ActionBar actionBar;
 
-    private File desFile = FileUtils.getWorkDir();
-    private File file = new File(desFile, "word.xml");
+//    private File desFile = FileUtils.getWorkDir();
+    private File desFile = FileUtils.getHistoryDir();
+    private File file = new File(desFile, "history.xml");
 
     static class ViewHolder{
         TextView content;
@@ -42,12 +41,7 @@ public class WordActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_word);
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-        lv = (ListView) findViewById(R.id.lv);
+        lv = findViewById(R.id.lv);
         initData();
     }
 

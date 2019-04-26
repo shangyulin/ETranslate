@@ -5,44 +5,6 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Spinner
-            android:id="@+id/spinner_from"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:background="#C0C0C0"
-            android:entries="@array/from"></Spinner>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textColor="#000"
-            android:text="翻译成"/>
-        <Spinner
-            android:id="@+id/spinner_to"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:background="#C0C0C0"
-            android:entries="@array/to"></Spinner>
-
-        <Button
-            android:id="@+id/read"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:drawableRight="@android:drawable/ic_media_play"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="朗读"
-            android:textColor="#000" />
-    </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -52,12 +14,13 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:drawable/edit_text"
-            android:enabled="true"
             android:gravity="top"
             android:hint="在此输入要翻译的文本"
             android:maxLines="10"
             android:minLines="8"
             android:padding="10dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:scrollbars="vertical"
             android:textColor="#000"
             android:textColorHint="@android:color/darker_gray" />
@@ -79,63 +42,5 @@
             android:padding="10dp"
             android:src="@mipmap/do_translate" />
     </RelativeLayout>
-
-    <!--<com.android.inputmethod.pinyin.View.StereoView
-        android:id="@+id/result"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/result_en"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#ff0"
-            android:maxLines="10"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:scrollbars="vertical"
-            android:textColor="#000"
-            android:textIsSelectable="true"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/result_xpy"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#f0f"
-            android:maxLines="10"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:scrollbars="vertical"
-            android:textColor="#000"
-            android:textIsSelectable="true"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#0f0"
-            android:maxLines="10"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:scrollbars="vertical"
-            android:textColor="#000"
-            android:textIsSelectable="true"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#00f"
-            android:maxLines="10"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:scrollbars="vertical"
-            android:textColor="#000"
-            android:textIsSelectable="true"
-            android:textSize="20sp" />
-    </com.android.inputmethod.pinyin.View.StereoView>-->
 
 </LinearLayout>

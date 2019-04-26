@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +42,6 @@ public class InformationFragment extends Fragment {
     private RelativeLayout wordbook;
     private CheckBox query;
     private RelativeLayout test;
-    private CheckBox window_bottom;
     private MyReceiver myReceiver;
     private RelativeLayout ocr;
 
@@ -73,6 +75,13 @@ public class InformationFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        if (!Settings.canDrawOverlays(getActivity())) {
+                            //启动Activity让用户授权
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getActivity().getPackageName()));
+                            startActivityForResult(intent, 10);
+                        }
+                    }
                     /** 开启服务 */
                     BaseApplication.getContext().startService(new Intent(getActivity(), WindowToolService.class));
                     sp.edit().putBoolean("window_tool", true).commit();
@@ -80,20 +89,6 @@ public class InformationFragment extends Fragment {
                     /** 关闭服务 */
                     BaseApplication.getContext().stopService(new Intent(getActivity(), WindowToolService.class));
                     sp.edit().putBoolean("window_tool", false).commit();
-                }
-            }
-        });
-        window_bottom.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    /** 开启服务 */
-                    BaseApplication.getContext().startService(new Intent(getActivity(), WindowBottomService.class));
-                    sp.edit().putBoolean("window_bottom_tool", true).commit();
-                }else{
-                    /** 关闭服务 */
-                    BaseApplication.getContext().stopService(new Intent(getActivity(), WindowBottomService.class));
-                    sp.edit().putBoolean("window_bottom_tool", false).commit();
                 }
             }
         });
@@ -126,7 +121,6 @@ public class InformationFragment extends Fragment {
         ocr = (RelativeLayout) view.findViewById(R.id.rl_ocr);
 
         window = (CheckBox) view.findViewById(R.id.cb_window);
-        window_bottom = (CheckBox) view.findViewById(R.id.cb_window_bottom);
         query = (CheckBox) view.findViewById(R.id.auto_query);
 
         /**
@@ -138,17 +132,6 @@ public class InformationFragment extends Fragment {
         }else{
             window.setChecked(false);
             BaseApplication.getContext().stopService(new Intent(getActivity(), WindowToolService.class));
-        }
-
-        /**
-         * 初始化底部悬浮窗
-         */
-        if(sp.getBoolean("window_bottom_tool", false)){
-            window_bottom.setChecked(true);
-            BaseApplication.getContext().startService(new Intent(getActivity(), WindowBottomService.class));
-        }else{
-            window_bottom.setChecked(false);
-            BaseApplication.getContext().stopService(new Intent(getActivity(), WindowBottomService.class));
         }
 
         /**

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.View;
@@ -24,8 +25,6 @@ public class WindowBottomService extends Service implements View.OnClickListener
     private WindowManager.LayoutParams params;// 窗口的属性
     private boolean flag = true;
     private View view;
-    private int winWidth;
-    private int winHeight;
     private SharedPreferences sp;
     private ImageView iv_autoquery;
     private TextView tv_autoquery;
@@ -39,11 +38,6 @@ public class WindowBottomService extends Service implements View.OnClickListener
     private LinearLayout exit;
     private boolean result;
 
-    /**
-     * 起始坐标
-     */
-    private int startX;
-    private int startY;
     private MyReceiver receiver;
 
     @Override
@@ -58,32 +52,34 @@ public class WindowBottomService extends Service implements View.OnClickListener
                 Context.WINDOW_SERVICE);
         params = new WindowManager.LayoutParams();
         // 获取屏幕宽高
-        winWidth = wManager.getDefaultDisplay().getWidth();
-        winHeight = wManager.getDefaultDisplay().getHeight();
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         params.format = PixelFormat.TRANSLUCENT;
-        params.type = WindowManager.LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= 26) {
+            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        }
         params.gravity = Gravity.BOTTOM;
         params.setTitle("Toast");
         //mParams.alpha = 0.1f;//窗口的透明度
         view = View.inflate(this, R.layout.window_bottom, null);
 
-        autoquery = (LinearLayout) view.findViewById(R.id.auto_query);
-        iv_autoquery = (ImageView) view.findViewById(R.id.iv_autoquery);
-        tv_autoquery = (TextView) view.findViewById(R.id.tv_autoquery);
+        autoquery = view.findViewById(R.id.auto_query);
+        iv_autoquery = view.findViewById(R.id.iv_autoquery);
+        tv_autoquery = view.findViewById(R.id.tv_autoquery);
 
-        add = (LinearLayout) view.findViewById(R.id.add);
-        iv_add = (ImageView) view.findViewById(R.id.iv_add);
-        tv_add = (TextView) view.findViewById(R.id.tv_add);
+        add = view.findViewById(R.id.add);
+        iv_add = view.findViewById(R.id.iv_add);
+        tv_add = view.findViewById(R.id.tv_add);
 
-        shared = (LinearLayout) view.findViewById(R.id.shared);
-        iv_share = (ImageView) view.findViewById(R.id.iv_shared);
-        tv_shared = (TextView) view.findViewById(R.id.tv_shared);
+        shared = view.findViewById(R.id.shared);
+        iv_share = view.findViewById(R.id.iv_shared);
+        tv_shared = view.findViewById(R.id.tv_shared);
 
-        exit = (LinearLayout) view.findViewById(R.id.exits);
+        exit = view.findViewById(R.id.exits);
         autoquery.setOnClickListener(this);
         add.setOnClickListener(this);
         shared.setOnClickListener(this);
@@ -104,11 +100,11 @@ public class WindowBottomService extends Service implements View.OnClickListener
             System.out.println("收到广播");
             // 当前是否开启服务
             boolean b = sp.getBoolean("auto_query", false);
-            if(b){
+            if (b) {
                 iv_autoquery.setBackgroundResource(R.mipmap.govaffairs_press);
                 tv_autoquery.setTextColor(getResources().getColor(R.color.textcolor));
 
-            }else{
+            } else {
                 iv_autoquery.setBackgroundResource(R.mipmap.govaffairs);
                 tv_autoquery.setTextColor(getResources().getColor(R.color.textcolor_white));
             }
@@ -122,10 +118,10 @@ public class WindowBottomService extends Service implements View.OnClickListener
             wManager.addView(view, params);//添加窗口
         }
         result = sp.getBoolean("auto_query", false);
-        if(result){
+        if (result) {
             iv_autoquery.setBackgroundResource(R.mipmap.govaffairs_press);
             tv_autoquery.setTextColor(getResources().getColor(R.color.textcolor));
-        }else{
+        } else {
             iv_autoquery.setBackgroundResource(R.mipmap.govaffairs);
             tv_autoquery.setTextColor(getResources().getColor(R.color.textcolor_white));
         }
@@ -141,22 +137,21 @@ public class WindowBottomService extends Service implements View.OnClickListener
     }
 
 
-
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             /**
              * 处理自动查询功能，开启服务，监听系统剪切板
              */
             case R.id.auto_query:
                 boolean is_Open = sp.getBoolean("auto_query", false);
                 // 如果服务已经开启
-                if(is_Open){
+                if (is_Open) {
                     sp.edit().putBoolean("auto_query", false).commit();
                     iv_autoquery.setBackgroundResource(R.mipmap.govaffairs);
                     tv_autoquery.setTextColor(getResources().getColor(R.color.textcolor_white));
                     stopService(new Intent(WindowBottomService.this, AutoQueryService.class));
-                }else{
+                } else {
                     sp.edit().putBoolean("auto_query", true).commit();
                     iv_autoquery.setBackgroundResource(R.mipmap.govaffairs_press);
                     tv_autoquery.setTextColor(getResources().getColor(R.color.textcolor));
